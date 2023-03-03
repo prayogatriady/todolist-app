@@ -30,7 +30,7 @@
         "url": "https://gin-gonic.com/docs/"
     },
     "paths": {
-        "/user": {
+        "/signup": {
             "post": {
                 "summary": "Create new user",
                 "description": "Create new user to create todolist",
@@ -52,10 +52,8 @@
                                 }
                             },
                             "example": {
-                                "value": {
-                                    "username": "dobow1",
-                                    "password": "pass1" 
-                                }
+                                "username": "dobow1",
+                                "password": "pass1" 
                             }
                         }
                     }
@@ -111,7 +109,180 @@
                 }
             }
         },
+        "/signin": {
+            "post": {
+                "summary": "Sign in",
+                "description": "Sign in to receive token",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "minLength": 1
+                                    }
+                                }
+                            },
+                            "example": {
+                                "username": "dobow1",
+                                "password": "pass1" 
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success sign in",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type":"string"
+                                        },
+                                        "message": {
+                                            "type":"string"
+                                        },
+                                        "body": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "success": {
+                                        "description": "Example success sign in",
+                                        "value":{
+                                            "status": "200 - STATUS OK",
+                                            "message": "Success sign in",
+                                            "body": {
+                                                "token": "exampletoken"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            }
+        },
         "/user/{userId}": {
+            "get": {
+                "summary": "Retrieve existing user",
+                "description": "Retrieve existing user",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "description": "User id for update",
+                        "schema": {
+                            "type": "integer",
+                            "nullable": false,
+                            "minLength": 1
+                        },
+                        "examples": {
+                            "example_1": {
+                                "description": "User id = 1",
+                                "value": 1
+                            },
+                            "example_2": {
+                                "description": "User id = 2",
+                                "value": 2
+                            }
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success retrieve user",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type":"string"
+                                        },
+                                        "message": {
+                                            "type":"string"
+                                        },
+                                        "body": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                },
+                                                "todolist": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer"
+                                                            },
+                                                            "title": {
+                                                                "type": "string"
+                                                            },
+                                                            "description": {
+                                                                "type": "string"
+                                                            },
+                                                            "user_id": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "success": {
+                                        "description": "Example success update todolist",
+                                        "value":{
+                                            "status": "200 - STATUS OK",
+                                            "message": "Success retrieve user",
+                                            "body": [
+                                                {
+                                                    "id": 1,
+                                                    "title": "Belajar",
+                                                    "description": "Golang RESTful API",
+                                                    "user_id": 1
+                                                },
+                                                {
+                                                    "id": 2,
+                                                    "title": "Belajar",
+                                                    "description": "Docker compose",
+                                                    "user_id": 1
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                }
+            },
             "put": {
                 "summary": "Update existing user",
                 "description": "Update existing user",
@@ -156,10 +327,8 @@
                                 }
                             },
                             "example": {
-                                "value": {
-                                    "username": "dobow1",
-                                    "description": "newpass1"
-                                }
+                                "username": "dobow1",
+                                "password": "newpass1"
                             }
                         }
                     }

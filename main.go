@@ -2,16 +2,24 @@ package main
 
 import (
 	"log"
+	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	model "github.com/prayogatriady/todolist-app/model/entities"
+	"github.com/prayogatriady/todolist-app/controller"
 	"github.com/prayogatriady/todolist-app/repository"
+	"github.com/prayogatriady/todolist-app/service"
 	"github.com/prayogatriady/todolist-app/utils"
 )
 
 func main() {
 	if err := godotenv.Load(".env"); err != nil {
-		log.Panic(err)
+		log.Println(err)
+	}
+
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		log.Println("Environment variable PORT must be set")
 	}
 
 	db, err := utils.InitDB()
@@ -20,18 +28,15 @@ func main() {
 	}
 
 	userRepo := repository.NewUserRepo(db)
+	userServ := service.NewUserServ(userRepo)
+	userCont := controller.NewUserCont(userServ)
 
-	user := model.User{
-		Username: "dobow2",
-		Password: "pass2",
+	r := gin.Default()
+
+	r.POST("/signup", userCont.Signup)
+	r.POST("/signin", userCont.Signin)
+
+	if err := r.Run(":" + PORT); err != nil {
+		log.Println(err)
 	}
-
-	log.Println(user)
-	// panic("test")
-
-	user, err = userRepo.CreateUser(user)
-	if err != nil {
-		log.Panic(err)
-	}
-	log.Println(user)
 }
