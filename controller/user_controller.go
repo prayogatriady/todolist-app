@@ -15,7 +15,7 @@ type UserContInterface interface {
 
 	Profile(c *gin.Context)
 	EditProfile(c *gin.Context)
-	// DeleteUser(c *gin.Context)
+	DeleteUser(c *gin.Context)
 }
 
 type UserCont struct {
@@ -77,7 +77,7 @@ func (uc *UserCont) Signin(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "200 - STATUS OK",
-		"message": "User logged in",
+		"message": "User signed in",
 		"body":    token,
 	})
 }
@@ -104,7 +104,7 @@ func (uc *UserCont) Profile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "200 - STATUS OK",
-		"message": "Profile retrieved",
+		"message": "User retrieved",
 		"body":    userResponse,
 	})
 }
@@ -141,7 +141,32 @@ func (uc *UserCont) EditProfile(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "200 - STATUS OK",
-		"message": "Profile updated",
+		"message": "User updated",
 		"body":    userResponse,
+	})
+}
+
+func (uc *UserCont) DeleteUser(c *gin.Context) {
+	// get payload from token
+	userId, err := middleware.ExtractToken(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "500 - INTERNAL SERVER ERROR",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	if err := uc.UserService.DeleteUser(userId); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "500 - INTERNAL SERVER ERROR",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "200 - STATUS OK",
+		"message": "User deleted",
 	})
 }

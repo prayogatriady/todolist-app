@@ -11,6 +11,7 @@ type UserRepoInterface interface {
 	GetUserByUsername(username string) (entity.User, error)
 	GetUserByUsernamePassword(username string, password string) (entity.User, error)
 	UpdateUser(userID int64, updateUser entity.User) (entity.User, error)
+	DeleteUser(userID int64) error
 }
 
 type UserRepo struct {
@@ -21,41 +22,48 @@ func NewUserRepo(db *gorm.DB) UserRepoInterface {
 	return &UserRepo{DB: db}
 }
 
-func (r *UserRepo) CreateUser(userEntity entity.User) (entity.User, error) {
-	if err := r.DB.Create(&userEntity).Error; err != nil {
+func (ur *UserRepo) CreateUser(userEntity entity.User) (entity.User, error) {
+	if err := ur.DB.Create(&userEntity).Error; err != nil {
 		return userEntity, err
 	}
 	return userEntity, nil
 }
 
-func (r *UserRepo) GetUser(userID int64) (entity.User, error) {
+func (ur *UserRepo) GetUser(userID int64) (entity.User, error) {
 	var user entity.User
-	if err := r.DB.Where("id =?", userID).Find(&user).Error; err != nil {
+	if err := ur.DB.Where("id =?", userID).Find(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil
 }
 
-func (r *UserRepo) GetUserByUsername(username string) (entity.User, error) {
+func (ur *UserRepo) GetUserByUsername(username string) (entity.User, error) {
 	var user entity.User
-	if err := r.DB.Where("username =?", username).Find(&user).Error; err != nil {
+	if err := ur.DB.Where("username =?", username).Find(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil
 }
 
-func (r *UserRepo) GetUserByUsernamePassword(username string, password string) (entity.User, error) {
+func (ur *UserRepo) GetUserByUsernamePassword(username string, password string) (entity.User, error) {
 	var user entity.User
-	if err := r.DB.Where("username =? AND password =?", username, password).Find(&user).Error; err != nil {
+	if err := ur.DB.Where("username =? AND password =?", username, password).Find(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil
 }
 
-func (r *UserRepo) UpdateUser(userID int64, updateUser entity.User) (entity.User, error) {
+func (ur *UserRepo) UpdateUser(userID int64, updateUser entity.User) (entity.User, error) {
 	var user entity.User
-	if err := r.DB.Where("id =?", userID).Updates(&updateUser).Find(&user).Error; err != nil {
+	if err := ur.DB.Where("id =?", userID).Updates(&updateUser).Find(&user).Error; err != nil {
 		return user, err
 	}
 	return user, nil
+}
+
+func (ur *UserRepo) DeleteUser(userID int64) error {
+	if err := ur.DB.Where("id =?", userID).Delete(&entity.User{}).Error; err != nil {
+		return err
+	}
+	return nil
 }

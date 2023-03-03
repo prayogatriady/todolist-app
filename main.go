@@ -44,6 +44,7 @@ func main() {
 	{
 		api.GET("/profile", userCont.Profile)
 		api.PUT("/edit", userCont.EditProfile)
+		api.DELETE("/delete", userCont.DeleteUser)
 	}
 
 	if err := r.Run(":" + PORT); err != nil {

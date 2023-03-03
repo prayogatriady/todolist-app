@@ -93,7 +93,7 @@
                                         "description": "Example success create todolist",
                                         "value":{
                                             "status": "200 - STATUS OK",
-                                            "message": "Success create user",
+                                            "message": "User created",
                                             "body": {
                                                 "id": 1,
                                                 "username": "dobow1",
@@ -166,7 +166,7 @@
                                         "description": "Example success sign in",
                                         "value":{
                                             "status": "200 - STATUS OK",
-                                            "message": "Success sign in",
+                                            "message": "User signed in",
                                             "body": {
                                                 "token": "exampletoken"
                                             }
@@ -182,31 +182,8 @@
         },
         "/api/profile": {
             "get": {
-                "summary": "Retrieve existing user",
-                "description": "Retrieve existing user",
-                "parameters": [
-                    {
-                        "name": "userId",
-                        "in": "path",
-                        "required": true,
-                        "description": "User id for update",
-                        "schema": {
-                            "type": "integer",
-                            "nullable": false,
-                            "minLength": 1
-                        },
-                        "examples": {
-                            "example_1": {
-                                "description": "User id = 1",
-                                "value": 1
-                            },
-                            "example_2": {
-                                "description": "User id = 2",
-                                "value": 2
-                            }
-                        }
-                    }
-                ],
+                "summary": "Retrieve existing auth user",
+                "description": "Retrieve existing auth user",
                 "responses": {
                     "200": {
                         "description": "Success retrieve user",
@@ -248,7 +225,7 @@
                                         "description": "Example success retrieve user details",
                                         "value":{
                                             "status": "200 - STATUS OK",
-                                            "message": "Success retrieve user",
+                                            "message": "User retrieved",
                                             "body": {
                                                 "id": 1,
                                                 "username": "Belajar",
@@ -266,135 +243,10 @@
                 }
             }
         },
-        "/user/{userId}": {
-            "get": {
-                "summary": "Retrieve existing user",
-                "description": "Retrieve existing user",
-                "parameters": [
-                    {
-                        "name": "userId",
-                        "in": "path",
-                        "required": true,
-                        "description": "User id for update",
-                        "schema": {
-                            "type": "integer",
-                            "nullable": false,
-                            "minLength": 1
-                        },
-                        "examples": {
-                            "example_1": {
-                                "description": "User id = 1",
-                                "value": 1
-                            },
-                            "example_2": {
-                                "description": "User id = 2",
-                                "value": 2
-                            }
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Success retrieve user",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "status": {
-                                            "type":"string"
-                                        },
-                                        "message": {
-                                            "type":"string"
-                                        },
-                                        "body": {
-                                            "type": "object",
-                                            "properties": {
-                                                "id": {
-                                                    "type": "integer"
-                                                },
-                                                "username": {
-                                                    "type": "string"
-                                                },
-                                                "todolist": {
-                                                    "type": "array",
-                                                    "items": {
-                                                        "type": "object",
-                                                        "properties": {
-                                                            "id": {
-                                                                "type": "integer"
-                                                            },
-                                                            "title": {
-                                                                "type": "string"
-                                                            },
-                                                            "description": {
-                                                                "type": "string"
-                                                            },
-                                                            "user_id": {
-                                                                "type": "string"
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "examples": {
-                                    "success": {
-                                        "description": "Example success update todolist",
-                                        "value":{
-                                            "status": "200 - STATUS OK",
-                                            "message": "Success retrieve user",
-                                            "body": [
-                                                {
-                                                    "id": 1,
-                                                    "title": "Belajar",
-                                                    "description": "Golang RESTful API",
-                                                    "user_id": 1
-                                                },
-                                                {
-                                                    "id": 2,
-                                                    "title": "Belajar",
-                                                    "description": "Docker compose",
-                                                    "user_id": 1
-                                                }
-                                            ]
-                                        }
-                                    }
-                                }
-                            }
-                            
-                        }
-                    }
-                }
-            },
+        "/api/edit": {
             "put": {
-                "summary": "Update existing user",
-                "description": "Update existing user",
-                "parameters": [
-                    {
-                        "name": "userId",
-                        "in": "path",
-                        "required": true,
-                        "description": "User id for update",
-                        "schema": {
-                            "type": "integer",
-                            "nullable": false,
-                            "minLength": 1
-                        },
-                        "examples": {
-                            "example_1": {
-                                "description": "User id = 1",
-                                "value": 1
-                            },
-                            "example_2": {
-                                "description": "User id = 2",
-                                "value": 2
-                            }
-                        }
-                    }
-                ],
+                "summary": "Update existing auth user",
+                "description": "Update existing auth user",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -454,7 +306,7 @@
                                         "description": "Example success update todolist",
                                         "value":{
                                             "status": "200 - STATUS OK",
-                                            "message": "Success create user",
+                                            "message": "User updated",
                                             "body": {
                                                 "id": 1,
                                                 "username": "dobow1",
@@ -468,33 +320,12 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        "/api/delete": {
             "delete": {
-                "summary": "Delete existing user",
-                "description": "Delete existing user",
-                "parameters": [
-                    {
-                        "name": "userId",
-                        "in": "path",
-                        "required": true,
-                        "description": "User id for delete",
-                        "schema": {
-                            "type": "integer",
-                            "nullable": false,
-                            "minLength": 1
-                        },
-                        "examples": {
-                            "example_1": {
-                                "description": "User id = 1",
-                                "value": 1
-                            },
-                            "example_2": {
-                                "description": "User id = 2",
-                                "value": 2
-                            }
-                        }
-                    }
-                ],
+                "summary": "Delete existing auth user",
+                "description": "Delete existing auth user",
                 "responses": {
                     "200": {
                         "description": "Success delete user",
@@ -516,7 +347,7 @@
                                         "description": "Example success delete user",
                                         "value":{
                                             "status": "200 - STATUS OK",
-                                            "message": "Success delete user"
+                                            "message": "User deleted"
                                         }
                                     }
                                 }

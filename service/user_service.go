@@ -13,6 +13,7 @@ type UserServInterface interface {
 	Signin(userRequest web.UserSigninRequest) (web.UserTokenResponse, error)
 	Profile(userId int64) (web.UserResponse, error)
 	EditProfile(userId int64, userRequest web.UserEditRequest) (web.UserResponse, error)
+	DeleteUser(userId int64) error
 }
 
 type UserServ struct {
@@ -127,4 +128,11 @@ func (us *UserServ) EditProfile(userId int64, userRequest web.UserEditRequest) (
 	}
 
 	return userResponse, nil
+}
+
+func (us *UserServ) DeleteUser(userId int64) error {
+	if err := us.UserRepo.DeleteUser(userId); err != nil {
+		return err
+	}
+	return nil
 }
