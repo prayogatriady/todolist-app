@@ -7,7 +7,7 @@ import (
 
 type UserRepoInterface interface {
 	CreateUser(userEntity entity.User) (entity.User, error)
-	// GetUser(userID int64) (entity.User, error)
+	GetUser(userID int64) (entity.User, error)
 	GetUserByUsername(username string) (entity.User, error)
 	GetUserByUsernamePassword(username string, password string) (entity.User, error)
 	// UpdateUser(userID int64, updateUser model.User) (model.User, error)
@@ -28,13 +28,13 @@ func (r *UserRepo) CreateUser(userEntity entity.User) (entity.User, error) {
 	return userEntity, nil
 }
 
-// func (r *UserRepo) GetUser(userID int64) (entity.User, error) {
-// 	var user entity.User
-// 	if err := r.DB.Where("id =?", userID).Find(&user).Error; err != nil {
-// 		return user, err
-// 	}
-// 	return user, nil
-// }
+func (r *UserRepo) GetUser(userID int64) (entity.User, error) {
+	var user entity.User
+	if err := r.DB.Where("id =?", userID).Find(&user).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}
 
 func (r *UserRepo) GetUserByUsername(username string) (entity.User, error) {
 	var user entity.User

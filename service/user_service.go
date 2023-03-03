@@ -11,6 +11,7 @@ import (
 type UserServInterface interface {
 	CreateUser(userRequest web.UserSignupRequest) (web.UserResponse, error)
 	Signin(userRequest web.UserSigninRequest) (web.UserTokenResponse, error)
+	Profile(userId int64) (web.UserResponse, error)
 }
 
 type UserServ struct {
@@ -64,16 +65,34 @@ func (us *UserServ) Signin(userRequest web.UserSigninRequest) (web.UserTokenResp
 		return web.UserTokenResponse{}, err
 	}
 
-	user, err := us.UserRepo.GetUserByUsernamePassword(userFound.Username, userFound.Password)
+	userEntity, err := us.UserRepo.GetUserByUsernamePassword(userFound.Username, userFound.Password)
 	if err != nil {
 		return web.UserTokenResponse{}, err
 	}
 
 	// create token
-	token, err := middleware.GenerateToken(user)
+	token, err := middleware.GenerateToken(userEntity)
 	if err != nil {
 		return web.UserTokenResponse{}, err
 	}
 
 	return web.UserTokenResponse{Token: token}, nil
+}
+
+func (us *UserServ) Profile(userId int64) (web.UserResponse, error) {
+	userEntity, err := us.UserRepo.GetUser(userId)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+
+	var userResponse web.UserResponse
+	userResponse = web.UserResponse{
+		ID:        userEntity.ID,
+		Username:  userEntity.Username,
+		Password:  userEntity.Password,
+		CreatedAt: userEntity.CreatedAt,
+		UpdatedAt: userEntity.UpdatedAt,
+	}
+
+	return userResponse, nil
 }

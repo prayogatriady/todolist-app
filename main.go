@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	"github.com/prayogatriady/todolist-app/controller"
+	"github.com/prayogatriady/todolist-app/middleware"
 	"github.com/prayogatriady/todolist-app/repository"
 	"github.com/prayogatriady/todolist-app/service"
 	"github.com/prayogatriady/todolist-app/utils"
@@ -35,6 +36,14 @@ func main() {
 
 	r.POST("/signup", userCont.Signup)
 	r.POST("/signin", userCont.Signin)
+
+	// Middleware for authentication
+	r.Use(middleware.AuthMiddleware)
+
+	api := r.Group("/api")
+	{
+		api.GET("profile", userCont.Profile)
+	}
 
 	if err := r.Run(":" + PORT); err != nil {
 		log.Println(err)

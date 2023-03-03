@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/prayogatriady/todolist-app/middleware"
 	"github.com/prayogatriady/todolist-app/model/web"
 	"github.com/prayogatriady/todolist-app/service"
 )
@@ -12,7 +13,7 @@ type UserContInterface interface {
 	Signup(c *gin.Context)
 	Signin(c *gin.Context)
 
-	// Profile(c *gin.Context)
+	Profile(c *gin.Context)
 	// EditProfile(c *gin.Context)
 	// DeleteUser(c *gin.Context)
 }
@@ -76,7 +77,34 @@ func (uc *UserCont) Signin(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "200 - STATUS OK",
-		"message": "User created",
+		"message": "User logged in",
 		"body":    token,
+	})
+}
+
+func (uc *UserCont) Profile(c *gin.Context) {
+	// get payload from token
+	userId, err := middleware.ExtractToken(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "500 - INTERNAL SERVER ERROR",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	userResponse, err := uc.UserService.Profile(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "500 - INTERNAL SERVER ERROR",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "200 - STATUS OK",
+		"message": "Profile retrieved",
+		"body":    userResponse,
 	})
 }
