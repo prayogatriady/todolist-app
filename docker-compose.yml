@@ -2,6 +2,7 @@ version: '3'
 services:
   todolist-mysql:
     image: mysql
+    container_name: todolist-mysql
     ports:
       - 3306:3306
     environment:
