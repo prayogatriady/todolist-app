@@ -10,7 +10,7 @@ type UserRepoInterface interface {
 	GetUser(userID int64) (entity.User, error)
 	GetUserByUsername(username string) (entity.User, error)
 	GetUserByUsernamePassword(username string, password string) (entity.User, error)
-	// UpdateUser(userID int64, updateUser model.User) (model.User, error)
+	UpdateUser(userID int64, updateUser entity.User) (entity.User, error)
 }
 
 type UserRepo struct {
@@ -52,10 +52,10 @@ func (r *UserRepo) GetUserByUsernamePassword(username string, password string) (
 	return user, nil
 }
 
-// func (r *UserRepo) UpdateUser(userID int64, updateUser model.User) (model.User, error) {
-// 	var user model.User
-// 	if err := r.DB.Where("id =?", userID).Updates(&updateUser).Find(&user).Error; err != nil {
-// 		return user, err
-// 	}
-// 	return user, nil
-// }
+func (r *UserRepo) UpdateUser(userID int64, updateUser entity.User) (entity.User, error) {
+	var user entity.User
+	if err := r.DB.Where("id =?", userID).Updates(&updateUser).Find(&user).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}

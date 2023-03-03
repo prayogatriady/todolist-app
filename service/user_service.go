@@ -12,6 +12,7 @@ type UserServInterface interface {
 	CreateUser(userRequest web.UserSignupRequest) (web.UserResponse, error)
 	Signin(userRequest web.UserSigninRequest) (web.UserTokenResponse, error)
 	Profile(userId int64) (web.UserResponse, error)
+	EditProfile(userId int64, userRequest web.UserEditRequest) (web.UserResponse, error)
 }
 
 type UserServ struct {
@@ -81,6 +82,37 @@ func (us *UserServ) Signin(userRequest web.UserSigninRequest) (web.UserTokenResp
 
 func (us *UserServ) Profile(userId int64) (web.UserResponse, error) {
 	userEntity, err := us.UserRepo.GetUser(userId)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+
+	var userResponse web.UserResponse
+	userResponse = web.UserResponse{
+		ID:        userEntity.ID,
+		Username:  userEntity.Username,
+		Password:  userEntity.Password,
+		CreatedAt: userEntity.CreatedAt,
+		UpdatedAt: userEntity.UpdatedAt,
+	}
+
+	return userResponse, nil
+}
+
+func (us *UserServ) EditProfile(userId int64, userRequest web.UserEditRequest) (web.UserResponse, error) {
+	// Generate hash password
+	bytePassword, err := bcrypt.GenerateFromPassword([]byte(userRequest.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return web.UserResponse{}, err
+	}
+
+	var userEntity entity.User
+	userEntity = entity.User{
+		ID:       userId,
+		Username: userRequest.Username,
+		Password: string(bytePassword),
+	}
+
+	userEntity, err = us.UserRepo.UpdateUser(userId, userEntity)
 	if err != nil {
 		return web.UserResponse{}, err
 	}

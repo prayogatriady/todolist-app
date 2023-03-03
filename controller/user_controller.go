@@ -14,7 +14,7 @@ type UserContInterface interface {
 	Signin(c *gin.Context)
 
 	Profile(c *gin.Context)
-	// EditProfile(c *gin.Context)
+	EditProfile(c *gin.Context)
 	// DeleteUser(c *gin.Context)
 }
 
@@ -105,6 +105,43 @@ func (uc *UserCont) Profile(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status":  "200 - STATUS OK",
 		"message": "Profile retrieved",
+		"body":    userResponse,
+	})
+}
+
+func (uc *UserCont) EditProfile(c *gin.Context) {
+	// Get request body
+	var userRequest web.UserEditRequest
+	if err := c.BindJSON(&userRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"status":  "400 - BAD REQUEST",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	// get payload from token
+	userId, err := middleware.ExtractToken(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "500 - INTERNAL SERVER ERROR",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	userResponse, err := uc.UserService.EditProfile(userId, userRequest)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status":  "500 - INTERNAL SERVER ERROR",
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "200 - STATUS OK",
+		"message": "Profile updated",
 		"body":    userResponse,
 	})
 }

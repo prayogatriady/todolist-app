@@ -42,7 +42,8 @@ func main() {
 
 	api := r.Group("/api")
 	{
-		api.GET("profile", userCont.Profile)
+		api.GET("/profile", userCont.Profile)
+		api.PUT("/edit", userCont.EditProfile)
 	}
 
 	if err := r.Run(":" + PORT); err != nil {
