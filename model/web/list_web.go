@@ -1,17 +1,13 @@
-package entity
+package web
 
-import (
-	"time"
+type ListRequest struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
 
-	"gorm.io/gorm"
-)
-
-type List struct {
+type ListResponse struct {
 	ID          int64  `json:"id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	UserID      int64  `json:"user_id"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
-	DeletedAt   gorm.DeletedAt
 }
