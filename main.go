@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"github.com/prayogatriady/todolist-app/controller"
 	"github.com/prayogatriady/todolist-app/middleware"
 	"github.com/prayogatriady/todolist-app/repository"
@@ -14,10 +13,7 @@ import (
 )
 
 func main() {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Println(err)
-	}
-
+	// set environtment variable for for PORT
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
 		log.Println("Environment variable PORT must be set")
@@ -28,26 +24,32 @@ func main() {
 		log.Panic(err)
 	}
 
+	// access each layer for User
 	userRepo := repository.NewUserRepo(db)
 	userServ := service.NewUserServ(userRepo)
 	userCont := controller.NewUserCont(userServ)
 
+	// access each layer for Todolist
 	todolistRepo := repository.NewListRepo(db)
 	todolistServ := service.NewListServ(todolistRepo)
 	todolistCont := controller.NewListCont(todolistServ)
 
+	// access each layer for Task
 	taskRepo := repository.NewTaskRepo(db)
 	taskServ := service.NewTaskServ(taskRepo)
 	taskCont := controller.NewTaskCont(taskServ)
 
+	// init instance for Gin framework
 	r := gin.Default()
 
+	// routes that can be accessed with out authentication
 	r.POST("/signup", userCont.Signup)
 	r.POST("/signin", userCont.Signin)
 
-	// Middleware for authentication
+	// middleware for authentication
 	r.Use(middleware.AuthMiddleware)
 
+	// routes that can be accessed with authentication
 	api := r.Group("/api")
 	{
 		api.GET("/profile", userCont.Profile)

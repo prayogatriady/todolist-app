@@ -5,16 +5,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func InitDB() (*gorm.DB, error) {
-	if err := godotenv.Load(".env"); err != nil {
-		log.Fatal(err)
-	}
-
+	// set environtment variable for setup mysql database
 	DB_USER := os.Getenv("DB_USER")
 	if DB_USER == "" {
 		log.Println("Environment variable DB_USER must be set")
