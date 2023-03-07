@@ -1,12 +1,15 @@
 version: '3'
 services:
-  todolist-mysql:
-    image: mysql
-    container_name: todolist-mysql
+  todolist:
+    build: .
+    image: todolist
+    container_name: todolist
     ports:
-      - 3306:3306
+      - "8080:8080"
     environment:
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=todolist
-    volumes:
-      - ./migrate.sql:/docker-entrypoint-initdb.d/migrate.sql
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
+      - PORT=${PORT}
