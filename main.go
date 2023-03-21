@@ -19,18 +19,19 @@ func main() {
 		log.Println("Environment variable PORT must be set")
 	}
 
-	db, err := utils.InitDB()
+	db, err := utils.InitMySQL()
 	if err != nil {
-		log.Panic(err)
+		log.Println(err)
 	}
+	rdb := utils.InitRedisClient()
 
 	// access each layer for User
-	userRepo := repository.NewUserRepo(db)
+	userRepo := repository.NewUserRepo(db, rdb)
 	userServ := service.NewUserServ(userRepo)
 	userCont := controller.NewUserCont(userServ)
 
 	// access each layer for Todolist
-	todolistRepo := repository.NewListRepo(db)
+	todolistRepo := repository.NewListRepo(db, rdb)
 	todolistServ := service.NewListServ(todolistRepo)
 	todolistCont := controller.NewListCont(todolistServ)
 

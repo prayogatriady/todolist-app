@@ -1,5 +1,10 @@
 version: '3'
 services:
+  redis:
+    image: redis:latest
+    container_name: my-redis
+    ports:
+      - "6379:6379"
   todolist:
     build: .
     image: todolist
@@ -13,3 +18,7 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_PORT=${DB_PORT}
       - PORT=${PORT}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      - redis

@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func InitDB() (*gorm.DB, error) {
+func InitMySQL() (*gorm.DB, error) {
 	// set environtment variable for setup mysql database
 	DB_USER := os.Getenv("DB_USER")
 	if DB_USER == "" {

@@ -1,7 +1,12 @@
 package repository
 
 import (
+	"context"
+	"encoding/json"
+	"time"
+
 	"github.com/prayogatriady/todolist-app/model/entity"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -15,11 +20,15 @@ type UserRepoInterface interface {
 }
 
 type UserRepo struct {
-	DB *gorm.DB
+	DB  *gorm.DB
+	RDB *redis.Client
 }
 
-func NewUserRepo(db *gorm.DB) UserRepoInterface {
-	return &UserRepo{DB: db}
+func NewUserRepo(db *gorm.DB, rdb *redis.Client) UserRepoInterface {
+	return &UserRepo{
+		DB:  db,
+		RDB: rdb,
+	}
 }
 
 func (ur *UserRepo) CreateUser(userEntity entity.User) (entity.User, error) {
@@ -39,7 +48,24 @@ func (ur *UserRepo) GetUser(userID int64) (entity.User, error) {
 
 func (ur *UserRepo) GetUserByUsername(username string) (entity.User, error) {
 	var user entity.User
-	if err := ur.DB.Where("username =?", username).Find(&user).Error; err != nil {
+
+	userRedis, err := ur.RDB.Get(context.Background(), username).Result()
+	if err != nil {
+		if err := ur.DB.Where("username =?", username).Find(&user).Error; err != nil {
+			return user, err
+		}
+
+		userJson, err := json.Marshal(user)
+		if err != nil {
+			return user, err
+		}
+		ur.RDB.Set(context.Background(), username, userJson, time.Minute*10)
+
+		return user, nil
+	}
+
+	err = json.Unmarshal([]byte(userRedis), &user)
+	if err != nil {
 		return user, err
 	}
 	return user, nil
